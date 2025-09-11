@@ -1,0 +1,50 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# Load the dataset from local file (assuming it's already uploaded)
+df = pd.read_csv("disney_plus_titles.csv")
+
+# Clean duration column to keep only movies (in minutes)
+replace_list_reps = ['Season', 'Seasons', 'season', 'seasons']
+df['duration'] = df['duration'].apply(lambda x: pd.NA if any(rep in str(x) for rep in replace_list_reps) else x)
+df.dropna(subset=['duration'], inplace=True)
+df['duration'] = df['duration'].str.extract(r'(\d+)').astype(int)
+
+# Task 6.1: Histogram of release_year
+hist = df['release_year'].plot.hist(bins=12, figsize=(10, 4), title="Movie Releases over the years")
+hist.set_xlabel("Year")
+hist.set_ylabel("Frequency")
+plt.grid(True)
+plt.tight_layout()
+plt.savefig("release_year_hist.png")
+plt.close()
+
+# Task 6.2: Extract first 25 rows
+df_graph = df.head(25)
+
+# Task 6.3: Pie chart of release_year counts (normalized)
+pie = df_graph['release_year'].value_counts(normalize=True).plot.pie(figsize=(10, 4), title="Pie chart of Movie Releases")
+plt.tight_layout()
+plt.savefig("release_year_pie.png")
+plt.close()
+
+# Task 6.4: Filter movies with duration >= 45 mins
+df_filtered = df_graph[df_graph['duration'] >= 45]
+
+# Task 6.5: Scatter plot of first 15 movies from df_filtered
+x = df_filtered.index[:15]
+y = df_filtered['duration'][:15]
+fig, ax = plt.subplots(figsize=(10, 4))
+ax.scatter(x, y, color='blue', alpha=0.5)
+ax.set_title("Duration of 15 Movies")
+ax.set_xlabel("Show ID")
+ax.set_ylabel("Duration")
+ax.grid(True)
+plt.tight_layout()
+plt.savefig("duration_scatter.png")
+plt.close()
+
+# Task 6.6: Movie title with highest duration
+movie_name = df_filtered.loc[df_filtered['duration'].idxmax(), 'title']
+
+print("Movie with highest duration:", movie_name)
