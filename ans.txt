@@ -1,1 +1,32 @@
-git remote add origin https://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@github.com/Gujjugaming2k/hackerrank_test.git
+#!/bin/bash
+
+# === CONFIGURATION ===
+GITHUB_USERNAME="Gujjugaming2k"
+REPO_NAME="hackerrank_test"
+BRANCH="main"  # Change to 'master' if needed
+
+# === CHECK FOR TOKEN ===
+if [ -z "$GITHUB_PAT" ]; then
+  echo "❌ Error: GITHUB_PAT environment variable not set."
+  echo "💡 Run: export GITHUB_PAT=your_token_here"
+  exit 1
+fi
+
+# === SCRIPT START ===
+echo "📁 Initializing Git repository..."
+git init
+
+echo "📄 Adding all files..."
+git add .
+
+echo "📝 Committing changes..."
+git commit -m "Automated commit via shell script"
+
+echo "🔗 Setting remote origin..."
+git remote remove origin 2>/dev/null
+git remote add origin https://${GITHUB_PAT}@github.com/${GITHUB_USERNAME}/${REPO_NAME}.git
+
+echo "🚀 Pushing to GitHub..."
+git push -u origin ${BRANCH}
+
+echo "✅ Push complete!"
